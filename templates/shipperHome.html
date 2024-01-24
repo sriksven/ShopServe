@@ -1,0 +1,112 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title> ShopServe | Shipper Home </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+        integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">ShopServe</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link active" href="{{ url_for('shipperHome') }}">Home <span
+                    class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<body>
+    <div class="container" style="padding: 30px;">
+        <h3>Welcome, {{ shipper[0]['companyName'] }}!</h3>
+        <hr>
+        <div class="row" style="padding: inherit;">
+            <h4 style="width: 100%;padding-bottom: 10px;">Unpicked Orders</h4><hr>
+            {% if unpickedOrders|length > 0 %}
+            <div class="col-2"></div>
+            <div class="col-8" style="display: inline-block;">
+            <table class="table">
+                <thead>
+                    <th>OrderID </th>
+                    <th>Order Date</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    <tbody>
+                        {% for order in unpickedOrders %}
+                        <tr>
+                          <td>{{ order['orderID'] }}</td>
+                          <td>{{ (order['timestamp']|string)[0:10] }}</td>
+                          <td style="float: right;"><a href="{{ url_for('updateShipperID', orderID=order['orderID']) }}"><button class="btn btn-danger">Add to my list</button></a></td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                </tbody>
+            </table>
+        </div>
+            {% else %}
+            <h6 style="text-align:center;">There are no orders to be picked up!</h6>
+            {% endif %}
+        </div>
+
+        <div class="row" style="padding: inherit;">
+            <h4 style="width: 100%;padding-bottom: 10px;">My Orders</h4><hr>
+            {% if pickedOrders|length > 0 %}
+            <div class="col-2"></div>
+            <div class="col-8" style="display: inline-block;">
+            <table class="table">
+                <thead>
+                    <th>OrderID </th>
+                    <th>Last Updated</th>
+                    <th>Order Status</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    <tbody>
+                        {% for order in pickedOrders %}
+                        <tr>
+                          <td>{{ order.orderID }}</td>
+                          <td>{{ order.lastUpdate }}</td>
+                          <td>{{ order.orderStatus }}</td>
+                          <td>
+                            {% if order.orderStatus=="ORDERED" %}
+                                <form action="{{ url_for('updateStatus', orderID=order.orderID) }}" method="post">
+                                    <select name="orderStatus">
+                                        <option value="IN-TRANSIT">IN-TRANSIT</option>
+                                        <option value="DELIVERED">DELIVERED</option>
+                                    </select>
+                                    <input type="submit" class="btn btn-danger" value="Update" style="float: right;"></br>
+                                </form>
+                            {% elif order.orderStatus=="IN-TRANSIT" %}
+                            <form action="{{ url_for('updateStatus', orderID=order.orderID) }}" method="post">
+                                <select name="orderStatus">
+                                    <option value="DELIVERED">DELIVERED</option>
+                                </select>
+                                <input type="submit" class="btn btn-danger" value="Update" style="float: right;"></br>
+                            </form>
+                            {% endif %}
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                </tbody>
+            </table>
+        </div>
+            {% else %}
+            <h6 style="text-align:center;">There are no orders to deliver!</h6>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>

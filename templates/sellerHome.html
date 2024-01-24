@@ -1,0 +1,181 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title> ShopServe | Seller Home </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+        integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+</head>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">ShopServe</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link active" href="{{ url_for('sellerHome') }}">Home <span
+                    class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="{{ url_for('addProduct') }}">Add Product</a>
+            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<body>
+    <div class="container" style="padding: 30px;">
+        <h3>My Dashboard</h3>
+        <hr>
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Total Revenue</h6>
+                        <h2>${{ revenue|round }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Total Profit</h6>
+                        <h2>${{ profit|round }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Most Purchased Product</h6>
+                        <h5>{{ topProduct }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if xValues|length>0 and yValues|length>0 %}
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <h5>Monthly Revenue</h5>
+                <meta id="xValues" data-X="{{xValues}}">
+                <meta id="yValues" data-Y="{{yValues}}">
+                <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+                <script>
+                    var xValues = $('#xValues').data()['x'];
+                    var tempX = xValues.split('|');
+                    tempX.pop();
+                    var yValues = $('#yValues').data()['y'];
+                    var tempY = yValues.split('|');
+                    tempY.pop();
+                    var y = []
+                    tempY.forEach(element => {
+                        y.push(parseFloat(element));
+                    });
+                    var maxEle = Math.max.apply(null, y);
+                    new Chart("myChart", {
+                        type: "line",
+                        data: {
+                            labels: tempX,
+                            datasets: [{
+                                fill: false,
+                                lineTension: 0,
+                                backgroundColor: "rgba(0,0,255,1.0)",
+                                borderColor: "rgba(0,0,255,0.1)",
+                                data: y
+                            }]
+                        },
+                        options: {
+                            legend: { display: false },
+                            scales: {
+                                yAxes: [{ ticks: { min: 0, max: maxEle*1.2 } }],
+                            }
+                        }
+                    });
+                </script>
+            </div>
+            <div class="col-1"></div>
+        </div>
+        {% endif %}
+
+        <div class="col-12">
+            <h5>Seller Stats</h5>
+            <meta id="xValues2" data-X="{{xValues2}}">
+            <meta id="yValues2" data-Y="{{yValues2}}">
+            <canvas id="myChart2" style="width:100%;max-width:700px"></canvas>
+            <script>
+                var xValues2 = $('#xValues2').data()['x'];
+                var yValues2 = $('#yValues2').data()['y'];
+                console.log(xValues2)
+                console.log(yValues2)
+
+                    const barColors = [
+                    "#b91d47",
+                    "#00aba9",
+                    "#2b5797",
+                    "#e8c3b9",
+                    "#1e7145"
+                    ];
+                    
+                    new Chart("myChart2", {
+                      type: "pie",
+                      data: {
+                        labels: xValues2.split(','),
+                        datasets: [{
+                          backgroundColor: barColors,
+                          data: yValues2
+                        }]
+                      },
+                      options: {
+                        title: {
+                          display: true,
+                          text: "MSRP per Category"
+                        }
+                      }
+                    });
+            </script>
+        </div>
+
+        <h3>My Products</h3>
+        <hr>
+        {% for row in products|batch(4) %}
+        <div class="row row-cols-4 row-cols-xs-4 row-cols-sm-4 row-cols-lg-4 g-3">
+            {% for product in row %}
+            <div class="col-3 hp" style="margin: 10px;">
+                <div class="card h-100 shadow-sm">
+                    <a href="#" style="color: inherit;">
+                        <img src="{{ product['imageURL'] }}" style="max-width: 200px; max-height: 200px;" class="card-img-top"
+                            alt="{{ product['name'] }}" />
+                        <div class="card-body">
+                            <div class="clearfix mb-3">
+                                Unit Price - <span class="float-start badge rounded-pill bg-success">$ {{ product['unitPrice']
+                                    }}</span>
+                            </div>
+                            <div class="clearfix mb-3">
+                                Available Quantity - <span class="float-start badge rounded-pill bg-danger">{{
+                                    product['units'] }}</span>
+                            </div>
+                            <h5 class="card-title">
+                                <a target="_blank">{{ product['name'] }}</a>
+                            </h5>
+                            <div class="d-grid gap-2 my-4">
+                                <a href="{{ url_for('delistProduct', product_id = product['productID']) }}"><button
+                                        class="btn btn-danger"><i class="fa-solid fa-trash"></i></button></a></td>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>

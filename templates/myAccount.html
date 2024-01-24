@@ -1,0 +1,113 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title> ShopServe | My Account </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+        integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">ShopServe</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" href="{{ url_for('userHome') }}">Home
+                <a class="nav-item nav-link active" href="{{ url_for('account') }}">My Account</a><span
+                    class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="{{ url_for('userOrders') }}">Orders</a>
+            <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<body>
+    <div class="container" style="padding: 30px;">
+        <div>
+            <h3>My Account</h3>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <form action=" {{ url_for('updateUser') }}" method="post" style="padding:30px">
+                <label for="firstName">First Name</label>
+                <input id="firstName" name="firstName" class="form-control" type="text" placeholder="First Name"
+                    value="{{ user[0]['firstName'] }}"></br>
+                <label for="lastName">Last Name</label>
+                <input id="lastName" name="lastName" class="form-control" type="text" placeholder="Last Name"
+                    value="{{ user[0]['lastName'] }}"></br>
+                <label for="password">Password</label>
+                <input id="password" name="password" class="form-control" type="password" placeholder="Password"
+                    value="{{ user[0]['password'] }}"></br>
+                <label for="phone">Phone</label>
+                <input id="phone" name="phone" class="form-control" type="tel" placeholder="Phone"
+                    value="{{ user[0]['phoneNo'] }}"></br>
+                <label for="phone">Street</label>
+                <input id="street" name="street" class="form-control" type="text" placeholder="Street"
+                    value="{{ user[0]['street'] }}"></br>
+                <label for="phone">City</label>
+                <input id="city" name="city" class="form-control" type="text" placeholder="City"
+                    value="{{ user[0]['city'] }}"></br>
+                <label for="phone">State</label>
+                <input id="state" name="state" class="form-control" type="text" placeholder="State"
+                    value="{{ user[0]['state'] }}" style="text-transform: uppercase;"></br>
+                <label for="phone">Zipcode</label>
+                <input id="zip" name="zip" class="form-control" type="text" pattern="[0-9]*" placeholder="Zipcode"
+                    value="{{ user[0]['zipcode'] }}"></br>
+                <input type="submit" class="btn" value="Save"></br>
+                </form>
+            </div>
+            <div class="col-6">
+                <h4>Cards </h4>
+                <hr>
+                {% if cards|length > 0 %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Card Number</th>
+                            <th scope="col">CVV</th>
+                            <th scope="col">Expiry Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for card in cards %}
+                        <tr>
+                        <td>{{ card['cardNo'] }}</td>
+                        <td>***</td>
+                        <td>{{ card['expiryDate'] }}</td>
+                        <td><a href="{{ url_for('deleteCard', card_no=card['cardNo']) }}"><button class="btn btn-danger"><i class="fa-solid fa-trash"></i></button></a></td>
+                    </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <h6 style="text-align:center;">You have not added any cards!</h6>
+                {% endif %}
+                <h4>Add Card </h4>
+                <hr>
+                <div>
+                    <form action=" {{ url_for('addCard') }}" method="post">
+                        <input type="textbox" class="form-control" id="cardNo" name="cardNo" maxlength="16" minlength="16" placeholder="Enter 16 digit Card No" pattern="[0-9]{16}" required><br>
+                        <input type="password" class="form-control" id="cvv" name="cvv" maxlength="3" minlength="3" placeholder="Enter 3 digit CVV" pattern="[0-9]{3}" required><br>
+                        <input type="date" class="form-control" id="expiryDate" name="expiryDate" required><br>
+                        <input type="submit" class="btn" value="Add"></br>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="display: flex;
+        justify-content: center;
+        align-items: center;">
+            <a href="{{ url_for('deleteUser') }}"><button type="button" class="btn btn-danger">Delete
+                    Account</button></a>
+        </div>
+    </div>
+</body>
+
+</html>

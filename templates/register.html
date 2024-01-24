@@ -1,0 +1,61 @@
+<!-- Store this code in 'register.html' file inside the 'templates' folder -->
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>ShopServe | Register </title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<script type="text/javascript">
+
+	function sellerShipperCheck() {
+		if (document.getElementById('seller').checked) {
+			document.getElementById('taxId').style.display = 'block';
+			document.getElementById('companyName').style.display = 'none';
+		} else if (document.getElementById('shipper').checked) {
+			document.getElementById('taxId').style.display = 'none';
+			document.getElementById('companyName').style.display = 'block';
+		}
+		else {
+			document.getElementById('taxId').style.display = 'none';
+			document.getElementById('companyName').style.display = 'none';
+		}
+	}
+	
+	</script>
+<body></br></br></br></br></br>
+	<div align="center">
+		<div align="center" class="border">
+			<div class="header">
+				<h1 class="word">Register</h1>
+			</div></br></br></br>
+			<form action="{{ url_for('register') }}" method="post">
+				<div class="msg">{{ msg }}</div>
+				<input id="firstName" name="firstName" type="text" placeholder="Enter Your First name" class="textbox"
+					required /></br></br>
+				<input id="lastName" name="lastName" type="text" placeholder="Enter Your Last name" class="textbox"
+					required /></br></br>
+				<input id="email" name="email" type="email" placeholder="Enter Your Email ID" class="textbox"
+					required /></br></br>
+				<input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox"
+					required /></br></br>
+				<input id="phone" type="tel" name="phone" placeholder="Enter Your Phone Number" class="textbox" required pattern="[0-9]{10}" maxlength="10"/></br></br>
+				<input id="street" name="street" type="text" placeholder="Enter Street" class="textbox"
+					required /></br></br>
+				<input id="city" name="city" type="text" placeholder="Enter City" class="textbox" required /></br></br>
+				<input id="state" name="state" type="text" placeholder="Enter State" class="textbox"
+					required maxlength="2"/></br></br>
+				<input id="zip" name="zip" type="text" pattern="[0-9]{5}" placeholder="Zipcode" class="textbox" maxlength="5"></br></br>
+				  <input class="form" type="radio" onclick="javascript:sellerShipperCheck();" id="customer" name="user_type" value="customer">Customer
+				  <input type="radio" onclick="javascript:sellerShipperCheck();" id="seller" name="user_type" value="seller">Seller
+				  <input type="radio" onclick="javascript:sellerShipperCheck();" id="shipper" name="user_type" value="shipper">Shipper<br>
+				<input id="taxId" name="taxId" type="text"  placeholder="Tax ID" class="textbox" style="display:none; border-top: 10px;">
+				<input id="companyName" name="companyName" type="text"  placeholder="Company Name" class="textbox" style="display:none; border-top: 10px;">
+				<input type="submit" class="btn" value="Sign Up"></br></br>
+			</form>
+			<p class="bottom">Already have an account? <a class="bottom" href="{{url_for('login')}}"> Sign In here</a>
+			</p>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,69 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title> ShopServe | Orders </title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">ShopServe</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      <a class="nav-item nav-link" href="{{ url_for('userHome') }}">Home
+        <a class="nav-item nav-link" href="{{ url_for('account') }}">My Account</a><span
+          class="sr-only">(current)</span></a>
+      <a class="nav-item nav-link active" href="{{ url_for('userOrders') }}">Orders</a>
+      <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<body>
+  <div class="container" style="padding: 30px;">
+    <h3>My Orders</h3>
+    <hr>
+    {% for order in orders %}
+    <div class="card" style="margin: 20px;">
+      <div class="row g-0">
+        <div class="col-md-3">
+          <img src="{{ order['productURL'] }}" class="img-fluid rounded-start" alt="{{ order.productName }}">
+        </div>
+        <div class="col-md-9">
+          <div class="card-body">
+            <h5 class="card-title">{{ order.productName }}</h5>
+            <p class="card-text"><small class="text-muted">Quantity - {{ order.quantity }}</small></p>
+            <p class="card-text" style="float: right;"><small class="text-muted">Payment ID : {{ order.paymentID
+                }}</small>
+            <p class="card-text">Total - ${{ order.total }}</p>
+            <hr>
+            {% if order.status|length >0 %}
+            <table class="table">
+              <thead>
+                <th>Status</th>
+                <th>Date</th>
+              </thead>
+              <tbody>
+                {% for s in order.status %}
+                <tr>
+                  <td>{{ s.statusType }}</td>
+                  <td>{{ s.time }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</body>
+
+</html>
